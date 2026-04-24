@@ -1,26 +1,23 @@
 %global debug_package %{nil}
-%global user prometheus
-%global group prometheus
 
-Name: artifactory_exporter
-Version: 1.16.1
+Name: ping_exporter
+Version: 1.2.0
 Release: 1%{?dist}
-Summary: Prometheus exporter for JFrog Artifactory stats.
+Summary: Ping exporter
 License: ASL 2.0
-URL:     https://github.com/peimanja/artifactory_exporter
-
-Source0: https://github.com/peimanja/artifactory_exporter/releases/download/v%{version}/%{name}-v%{version}-linux-amd64.tar.gz
-Source1: %{name}.unit
+URL:        https://github.com/czerwonk/ping_exporter
+Source0:    https://github.com/czerwonk/ping_exporter/releases/download/v%{version}/ping_exporter_%{version}_linux_amd64.tar.gz
+Source1: %{name}.service
 Source2: %{name}.default
 
 %{?systemd_requires}
 Requires(pre): shadow-utils
 
 %description
-Collects metrics about an Artifactory system
+The ping exporter allows ping probing of endpoints via ICMP.
 
 %prep
-%setup -q -D -c %{name}-v%{version}-linux-amd64
+%setup -q -c -n %{name}-%{version}_linux_amd64
 
 %build
 /bin/true
@@ -28,8 +25,8 @@ Collects metrics about an Artifactory system
 %install
 mkdir -vp %{buildroot}%{_sharedstatedir}/prometheus
 install -D -m 755 %{name} %{buildroot}%{_bindir}/%{name}
-install -D -m 644 %{SOURCE2} %{buildroot}%{_sysconfdir}/default/%{name}
 install -D -m 644 %{SOURCE1} %{buildroot}%{_unitdir}/%{name}.service
+install -D -m 644 %{SOURCE2} %{buildroot}%{_sysconfdir}/default/%{name}
 
 %pre
 getent group prometheus >/dev/null || groupadd -r prometheus
@@ -48,11 +45,11 @@ exit 0
 
 %files
 %defattr(-,root,root,-)
-%{_bindir}/%{name}
-%config(noreplace) %{_sysconfdir}/default/%{name}
-%dir %attr(755, %{user}, %{group}) %{_sharedstatedir}/prometheus
+%caps(cap_net_raw=ep) %{_bindir}/%{name}
 %{_unitdir}/%{name}.service
+%config(noreplace) %{_sysconfdir}/default/%{name}
+%dir %attr(755, prometheus, prometheus)%{_sharedstatedir}/prometheus
 
 %changelog
-* Thu Apr 02 2026 Ivan Garcia <igarcia@cloudox.org> - 1.16.1
-- Initial packaging for the 1.16.1 branch
+* Thu Apr 23 2026 Ivan Garcia <igarcia@cloudox.org> - 1.2.0
+- Initial packaging for the 1.2.0 branch, switch to https://github.com/czerwonk/ping_exporter
