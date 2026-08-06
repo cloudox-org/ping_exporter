@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 Name: ping_exporter
-Version: 1.2.0
+Version: 1.2.1
 Release: 1%{?dist}
 Summary: Ping exporter
 License: ASL 2.0
@@ -51,5 +51,7 @@ exit 0
 %dir %attr(755, prometheus, prometheus)%{_sharedstatedir}/prometheus
 
 %changelog
+* Thu Aug 06 2026 Ivan Garcia <igarcia@cloudox.org> - 1.2.1
+- Initial packaging for the 1.2.1 branch, switch to https://github.com/czerwonk/ping_exporter
 * Thu Apr 23 2026 Ivan Garcia <igarcia@cloudox.org> - 1.2.0
 - Initial packaging for the 1.2.0 branch, switch to https://github.com/czerwonk/ping_exporter
